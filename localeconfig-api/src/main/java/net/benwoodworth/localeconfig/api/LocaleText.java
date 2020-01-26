@@ -3,23 +3,24 @@ package net.benwoodworth.localeconfig.api;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
 public class LocaleText {
     @NotNull
-    private String locale;
+    private Locale locale;
 
     @NotNull
     private String text;
 
-    LocaleText(@NotNull String locale, @NotNull String text) {
+    LocaleText(@NotNull Locale locale, @NotNull String text) {
         this.locale = locale;
         this.text = text;
     }
 
     @NotNull
-    public String getLocale() {
+    public Locale getLocale() {
         return locale;
     }
 
@@ -54,11 +55,11 @@ public class LocaleText {
     /**
      * @param values the format values to substitute in the string.
      * @return the formatted locale text.
-     * @see java.lang.String#format(String, Object...)
+     * @see String#format(Locale, String, Object...)
      */
     @NotNull
     public String format(Object... values) {
-        return String.format(text, (Object[]) values);
+        return String.format(locale, text, (Object[]) values);
     }
 
     /**
