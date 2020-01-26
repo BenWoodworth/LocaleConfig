@@ -1,0 +1,27 @@
+subprojects {
+    group "net.benwoodworth.minecraft.localeconfig"
+    version "1.0-SNAPSHOT"
+
+    apply plugin: "java"
+
+    repositories {
+        mavenCentral()
+        maven { url = "http://repo.spongepowered.org/maven" }
+        maven { url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    dependencies {
+        implementation "org.spongepowered:spongeapi:4.1.0"
+        implementation "org.bukkit:bukkit:1.8-R0.1-SNAPSHOT"
+
+        implementation "org.jetbrains:annotations:16.0.2"
+
+        testImplementation "org.junit.jupiter:junit-jupiter-api:5.6.0"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.6.0"
+    }
+}
+

@@ -1,0 +1,4 @@
+rootProject.name = 'LocaleConfig'
+
+include ":localeconfig"
+include ":localeconfig-api"
