@@ -8,6 +8,7 @@ subprojects {
         mavenCentral()
         maven { url = "http://repo.spongepowered.org/maven" }
         maven { url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
+        maven { url = "https://oss.sonatype.org/content/repositories/snapshots" }
     }
 
     test {
@@ -15,8 +16,9 @@ subprojects {
     }
 
     dependencies {
-        implementation "org.spongepowered:spongeapi:4.1.0"
-        implementation "org.bukkit:bukkit:1.8-R0.1-SNAPSHOT"
+        implementation "org.spongepowered:spongeapi:3.0.0"
+        implementation "org.bukkit:bukkit:1.12-R0.1-SNAPSHOT"
+        implementation "net.md-5:bungeecord-api:1.7-SNAPSHOT"
 
         implementation "org.jetbrains:annotations:16.0.2"
 
