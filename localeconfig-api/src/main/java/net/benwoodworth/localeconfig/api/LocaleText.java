@@ -9,10 +9,10 @@ import java.util.Objects;
 
 public class LocaleText {
     @NotNull
-    private Locale locale;
+    private final Locale locale;
 
     @NotNull
-    private String text;
+    private final String text;
 
     LocaleText(@NotNull Locale locale, @NotNull String text) {
         this.locale = locale;
