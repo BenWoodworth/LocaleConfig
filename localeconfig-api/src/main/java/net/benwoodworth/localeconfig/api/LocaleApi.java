@@ -19,7 +19,7 @@ public class LocaleApi {
         System.err.println("[LocaleApi] " + namespace + ": " + message);
     }
 
-    @Nullable
+    @NotNull
     private static LocaleTextProvider getLocaleTextProvider() {
         if (localeTextProvider == null) {
             throw new IllegalStateException("Locales have not been loaded. Must call LocaleApi.loadLocales() first.");
@@ -34,12 +34,12 @@ public class LocaleApi {
 
     @Nullable
     public static LocaleText getText(@NotNull String localeKey) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        return getText(getLocaleTextProvider().getServerLocale(), localeKey);
     }
 
     @Nullable
     public static LocaleText getText(@NotNull Locale locale, @NotNull String localeKey) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        return getLocaleTextProvider().getText(locale, localeKey);
     }
 
     @Nullable

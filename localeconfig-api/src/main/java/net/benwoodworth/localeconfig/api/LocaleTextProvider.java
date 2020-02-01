@@ -26,7 +26,7 @@ abstract class LocaleTextProvider {
     }
 
     @Nullable
-    private LocaleText getText(@NotNull Locale locale, @NotNull String localeKey) {
+    LocaleText getText(@NotNull Locale locale, @NotNull String localeKey) {
         String namespace;
         String namespacedLocaleKey;
 
