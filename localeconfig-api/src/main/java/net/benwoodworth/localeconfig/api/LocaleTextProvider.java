@@ -38,8 +38,46 @@ abstract class LocaleTextProvider {
     }
 
     @Nullable
-    abstract LocaleText getLocalText(@NotNull Locale locale, @NotNull String namespacedLocaleKey);
+    abstract LocaleText getLocalText(@NotNull Locale locale, @NotNull String localeKey);
 
     @Nullable
     abstract LocaleText getGlobalText(@NotNull Locale locale, @NotNull String namespace, @NotNull String namespacedLocaleKey);
+
+    private static class SoftLocaleTextProvider extends LocaleTextProvider {
+        private String namespace;
+        private Map<Locale, Map<String, String>> locales;
+
+        SoftLocaleTextProvider(@NotNull String namespace, Map<Locale, Map<String, String>> locales) {
+            this.namespace = namespace;
+            this.locales = locales;
+        }
+
+        @Override
+        protected String getNamespace() {
+            return namespace;
+        }
+
+        @Override
+        @NotNull Locale getServerLocale() {
+            return Locale.ENGLISH;
+        }
+
+        @Override
+        @Nullable LocaleText getLocalText(@NotNull Locale locale, @NotNull String localeKey) {
+            Map<String, String> localeKeys = locales.get(locale);
+            if (localeKeys != null) {
+                String text = localeKeys.get(localeKey);
+                if (text != null) {
+                    return new LocaleText(locale, text);
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        @Nullable LocaleText getGlobalText(@NotNull Locale locale, @NotNull String namespace, @NotNull String namespacedLocaleKey) {
+            return null;
+        }
+    }
 }
