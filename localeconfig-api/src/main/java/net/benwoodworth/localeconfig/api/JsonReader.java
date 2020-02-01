@@ -1,6 +1,7 @@
 package net.benwoodworth.localeconfig.api;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -37,7 +38,7 @@ class JsonReader {
         }
     }
 
-    private static Map<@NotNull String, @NotNull String> readLocaleElement(BufferedReader reader) throws IOException, ParseException {
+    private static Map<@NotNull String, @Nullable String> readLocaleElement(BufferedReader reader) throws IOException, ParseException {
         readWs(reader);
         Map<String, String> result = readLocaleObject(reader);
         readWs(reader);
@@ -49,7 +50,7 @@ class JsonReader {
         return result;
     }
 
-    private static Map<@NotNull String, @NotNull String> readLocaleObject(BufferedReader reader) throws IOException, ParseException {
+    private static Map<@NotNull String, @Nullable String> readLocaleObject(BufferedReader reader) throws IOException, ParseException {
         int ch = reader.read();
         if (ch != '{') {
             throw new ParseException("Expecting object, but found '" + (char) ch + "'", 0);
@@ -101,21 +102,50 @@ class JsonReader {
         }
 
         readWs(reader);
-        String value = readString(reader);
+        String value = readLocaleValue(reader);
         readWs(reader);
 
         toMap.put(key, value);
     }
 
+    private static String readLocaleValue(BufferedReader reader) throws IOException, ParseException {
+        reader.mark(4);
+
+        char[] chars = new char[4];
+        int charsRead = reader.read(chars);
+
+        if (charsRead == 0) {
+            throw new ParseException("Expected string or null, but found EOF", 0);
+        }
+
+        if (charsRead == 4 &&
+                chars[0] == 'n' &&
+                chars[1] == 'u' &&
+                chars[2] == 'l' &&
+                chars[3] == 'l'
+        ) {
+            return null;
+        }
+
+        if (charsRead >= 1 && chars[0] == '"') {
+            reader.reset();
+            return readString(reader);
+        }
+
+        throw new ParseException("Expected string or null, but found '" + chars[0] + "'", 0);
+    }
+
     private static String readString(BufferedReader reader) throws IOException, ParseException {
-        if (reader.read() != '"') {
-            throw new ParseException("Expecting open quotes", 0);
+        int ch = reader.read();
+        if (ch != '"') {
+            throw new ParseException("Expecting open quotes, but found '" + (char) ch + "'", 0);
         }
 
         String result = readCharacters(reader);
 
-        if (reader.read() != '"') {
-            throw new ParseException("Expecting close quotes", 0);
+        ch = reader.read();
+        if (ch != '"') {
+            throw new ParseException("Expecting close quotes, but found '" + (char) ch + "'", 0);
         }
 
         return result;
