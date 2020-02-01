@@ -3,8 +3,7 @@ package net.benwoodworth.localeconfig.api;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 abstract class LocaleTextProvider {
     private LocaleTextProvider() {
@@ -69,6 +68,51 @@ abstract class LocaleTextProvider {
 
     @Nullable
     abstract LocaleText getText(@NotNull Locale locale, @NotNull String namespace, @NotNull String namespacedLocaleKey);
+
+    static LocaleTextProvider create(@NotNull String namespace, @NotNull Map<Locale, Map<String, String>> locales) {
+        validateLocales(namespace, locales);
+        return new SoftLocaleTextProvider(namespace, locales);
+    }
+
+    private static void validateLocales(String namespace, Map<Locale, Map<String, String>> locales) {
+        if (!locales.containsKey(Locale.ENGLISH)) {
+            LocaleApi.logErr(namespace, "English (en) locale is missing. English is used as the default locale.");
+            return;
+        }
+
+        Map<String, String> englishLocaleTexts = locales.get(Locale.ENGLISH);
+        List<String> englishLocaleKeys = new ArrayList<>(englishLocaleTexts.keySet());
+        englishLocaleKeys.sort(String::compareTo);
+
+        // Null values in english
+        for (String localeKey : englishLocaleKeys) {
+            if (englishLocaleTexts.get(localeKey) == null) {
+                LocaleApi.logErr(namespace, "en/" + localeKey + " is null");
+            }
+        }
+
+        // Missing/extra keys in other locales
+        for (Locale locale : locales.keySet()) {
+            if (locale.equals(Locale.ENGLISH)) {
+                continue;
+            }
+
+            Map<String, String> localeTexts = locales.get(locale);
+            for (String englishLocaleKey : englishLocaleKeys) {
+                if (!localeTexts.containsKey(englishLocaleKey)) {
+                    LocaleApi.logErr(namespace, locale.toString() + " is missing a key: " + englishLocaleKey);
+                }
+            }
+
+            List<String> localeKeys = new ArrayList<>(localeTexts.keySet());
+            localeKeys.sort(String::compareTo);
+            for (String localeKey : localeKeys) {
+                if (!englishLocaleTexts.containsKey(localeKey)) {
+                    LocaleApi.logErr(namespace, locale.toString() + " has an extra key: " + localeKey);
+                }
+            }
+        }
+    }
 
     private static class SoftLocaleTextProvider extends LocaleTextProvider {
         private String namespace;
