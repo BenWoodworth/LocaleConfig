@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -27,7 +28,7 @@ class SubstitutorTest {
         String expected = "a a a ${a b c} bbbbb.0$ ccc ccca $xyz ${ $";
 
         // Act
-        LocaleText localeText = new LocaleText("en", text);
+        LocaleText localeText = new LocaleText(Locale.ENGLISH, text);
         String actual = localeText.substitute(substitutions);
 
         // Assert
