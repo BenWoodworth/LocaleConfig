@@ -127,19 +127,4 @@ public class LocaleApi {
     public static LocaleText getText(@NotNull String locale, @NotNull String localeKey) {
         return getText(Locale.forLanguageTag(locale), localeKey);
     }
-
-    @Nullable
-    public static LocaleText getText(@NotNull org.spongepowered.api.entity.living.player.Player player, @NotNull String localeKey) {
-        return getText(player.getLocale(), localeKey);
-    }
-
-    @Nullable
-    public static LocaleText getText(@NotNull org.bukkit.entity.Player player, @NotNull String localeKey) {
-        return getText(player.getLocale(), localeKey);
-    }
-
-    @Nullable
-    public static LocaleText getText(@NotNull net.md_5.bungee.api.connection.ProxiedPlayer player, @NotNull String localeKey) {
-        return getText(player.getLocale(), localeKey);
-    }
 }

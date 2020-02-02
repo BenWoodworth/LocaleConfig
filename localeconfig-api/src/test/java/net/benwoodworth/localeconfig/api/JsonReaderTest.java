@@ -1,12 +1,12 @@
 package net.benwoodworth.localeconfig.api;
 
-import com.google.common.base.Charsets;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +17,7 @@ class JsonReaderTest {
     private BufferedReader stringReader(String string) {
         return new BufferedReader(
                 new InputStreamReader(
-                        new ByteArrayInputStream(string.getBytes(Charsets.UTF_8))
+                        new ByteArrayInputStream(string.getBytes(StandardCharsets.UTF_8))
                 )
         );
     }
