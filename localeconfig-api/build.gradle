@@ -1,0 +1,14 @@
+apply plugin: "maven-publish"
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = "localeconfig-api"
+
+            from components.java
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
+}
