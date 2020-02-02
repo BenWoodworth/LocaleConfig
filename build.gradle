@@ -1,6 +1,6 @@
 subprojects {
-    group "net.benwoodworth.minecraft.localeconfig"
-    version "1.0-SNAPSHOT"
+    group "net.benwoodworth.localeconfig"
+    version "0.1.0"
 
     apply plugin: "java"
 
