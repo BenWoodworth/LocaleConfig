@@ -13,6 +13,8 @@ import java.util.Locale;
 import java.util.Map;
 
 public class LocaleApi {
+    private static final String PACKAGE = "net.benwoodworth.localeconfig.api";
+
     private static LocaleTextProvider localeTextProvider = null;
 
     private LocaleApi() {
@@ -50,6 +52,10 @@ public class LocaleApi {
      * @param localeResourceDir The resource directory containing locale json files. e.g. /locales
      */
     public static void loadLocales(@NotNull String namespace, @NotNull String localeResourceDir) {
+        if (LocaleApi.class.getPackage().getName().equals(PACKAGE)) {
+            logErr(namespace, "The package " + PACKAGE + " should be shadowed and relocated to avoid conflicts");
+        }
+
         if (namespace.contains(":")) {
             throw new IllegalArgumentException("Namespace must not contain a colon.");
         }
