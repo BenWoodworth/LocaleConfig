@@ -3,11 +3,6 @@ package net.benwoodworth.localeconfig.api;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -53,52 +48,19 @@ public class LocaleApi {
      */
     public static void loadLocales(@NotNull String namespace, @NotNull String localeResourceDir) {
         if (LocaleApi.class.getPackage().getName().equals(PACKAGE)) {
-            logErr(namespace, "The package " + PACKAGE + " should be shadowed and relocated to avoid conflicts");
+            logErr(namespace, "The package " + PACKAGE + " should be relocated to avoid conflicts");
         }
 
         if (namespace.contains(":")) {
             throw new IllegalArgumentException("Namespace must not contain a colon.");
         }
 
-        URL resourceUrl = LocaleApi.class.getResource(localeResourceDir);
-        if (resourceUrl == null) {
-            throw new RuntimeException("Could not find locale resource directory '" + localeResourceDir + "'");
-        }
-
-        File resourceFile;
+        Map<Locale, Map<String, String>> locales;
         try {
-            resourceFile = new File(resourceUrl.toURI());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Unable to get file locale directory from URL '" + resourceUrl + "'", e);
-        }
-
-        File[] localeFiles = resourceFile.listFiles();
-        if (localeFiles == null) {
-            throw new IllegalArgumentException("Resource '" + localeResourceDir + "' is not a directory.");
-        }
-
-        Map<Locale, Map<String, String>> locales = new HashMap<>();
-        for (File localeFile : localeFiles) {
-            String fileName = localeFile.getName();
-            if (!localeFile.isFile()) {
-                logErr(namespace, fileName + " is not a file.");
-                continue;
-            } else if (!fileName.toLowerCase().endsWith(".json")) {
-                logErr(namespace, fileName + " is not a .json file");
-                continue;
-            }
-
-            try {
-                BufferedReader reader = new BufferedReader(new FileReader(localeFile));
-                Map<String, String> json = JsonReader.readLocaleJson(reader);
-
-                String localeTag = fileName.substring(0, fileName.length() - 5); // Without .json
-                Locale locale = Locale.forLanguageTag(localeTag);
-
-                locales.put(locale, json);
-            } catch (Exception e) {
-                new Exception("Error loading " + fileName + ": " + e.getMessage(), e).printStackTrace();
-            }
+            locales = LocaleFileLoader.loadLocaleFiles(namespace, localeResourceDir);
+        } catch (Exception e) {
+            e.printStackTrace();
+            locales = new HashMap<>();
         }
 
         localeTextProvider = LocaleTextProvider.create(namespace, locales);
