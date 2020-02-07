@@ -53,16 +53,6 @@ public class LocaleText {
     }
 
     /**
-     * @param values the format values to substitute in the string.
-     * @return the formatted locale text.
-     * @see String#format(Locale, String, Object...)
-     */
-    @NotNull
-    public String format(Object... values) {
-        return String.format(locale, text, (Object[]) values);
-    }
-
-    /**
      * Substitute named values in the locale text:
      * <ul>
      *     <li><code>$key</code> and <code>${key}</code> will be substituted for values in the substitution map.</li>
