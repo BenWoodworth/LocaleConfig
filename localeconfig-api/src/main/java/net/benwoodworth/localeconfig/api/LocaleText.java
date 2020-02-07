@@ -74,6 +74,47 @@ public class LocaleText {
         return substituteText(text, substitutions);
     }
 
+    /**
+     * Substitute named values in the locale text.
+     *
+     * <p>
+     * Usage:
+     * <pre>
+     *     substitute(
+     *         "key1", value1,
+     *         "key2", value2,
+     *         ...
+     *     )
+     *     </pre>
+     * </p>
+     *
+     * @param substitutionPairs The placeholder/value pairs to be substituted.
+     * @return the substituted locale text.
+     * @see LocaleText::substitute(Map)
+     */
+    @NotNull
+    public String substitute(Object... substitutionPairs) {
+        if (substitutionPairs == null) {
+            throw new IllegalArgumentException("substitutionPairs cannot be null");
+        } else if (substitutionPairs.length % 2 != 0) {
+            throw new IllegalArgumentException("Must have an even number of arguments");
+        }
+
+        Map<String, Object> substitutions = new HashMap<>();
+        for (int i = 0; i < substitutionPairs.length; i += 2) {
+            Object key = substitutionPairs[i];
+            Object value = substitutionPairs[i + 1];
+
+            if (!(key instanceof String)) {
+                throw new IllegalArgumentException("Argument at index " + i + " is not a String: " + key);
+            }
+
+            substitutions.put((String) key, value);
+        }
+
+        return substitute(substitutions);
+    }
+
     // region substituteText()
 
     private static Map<String, String> globalSubstitutions = new HashMap<>();
