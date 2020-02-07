@@ -70,7 +70,7 @@ public class LocaleApi {
     /**
      * Load locales from the /locales resource directory.
      *
-     * @see LocaleApi::loadLocales(String, String)
+     * @see LocaleApi#loadLocales(String, String)
      */
     public static void loadLocales(@NotNull String namespace) {
         loadLocales(namespace, "/locales");

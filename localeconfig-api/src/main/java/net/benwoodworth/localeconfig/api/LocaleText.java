@@ -90,7 +90,7 @@ public class LocaleText {
      *
      * @param substitutionPairs The placeholder/value pairs to be substituted.
      * @return the substituted locale text.
-     * @see LocaleText::substitute(Map)
+     * @see LocaleText#substitute(Map)
      */
     @NotNull
     public String substitute(Object... substitutionPairs) {
