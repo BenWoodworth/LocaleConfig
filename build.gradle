@@ -1,5 +1,5 @@
 subprojects {
-    group "net.benwoodworth"
+    group "net.benwoodworth.localeconfig"
     version "0.0.1"
 
     apply plugin: "java"
