@@ -8,7 +8,8 @@ import java.util.Locale;
 import java.util.Map;
 
 public class LocaleApi {
-    private static final String PACKAGE = "net.benwoodworth.localeconfig.api";
+    // Replacing ! with . prevents package relocation smartly changing this package String
+    private static final String PACKAGE = "net!benwoodworth!localeconfig!api".replace('!', '.');
 
     private static LocaleTextProvider localeTextProvider = null;
 
