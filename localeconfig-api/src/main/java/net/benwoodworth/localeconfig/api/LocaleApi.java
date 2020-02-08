@@ -88,7 +88,7 @@ public class LocaleApi {
 
     @Nullable
     public static LocaleText getText(@NotNull String locale, @NotNull String localeKey) {
-        return getText(Locale.forLanguageTag(locale), localeKey);
+        return getText(Locale.forLanguageTag(locale.replace('_', '-')), localeKey);
     }
 
     @Nullable
