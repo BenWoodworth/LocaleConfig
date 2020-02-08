@@ -37,10 +37,10 @@ public class LocaleApi {
      * Load locales from the specified resource directory.
      *
      * <ul>
-     *     <li>Locale files should be named *.json, e.g. en.json, en-us.json, etc.</li>
+     *     <li>Locale files should be named *.json, e.g. en.json, en-US.json, etc.</li>
      *     <li>The locale json should be an object containing only null/string entries.</li>
      *     <li>English (en.json) is used as a default/fallback, and should not contain null entries.</li>
-     *     <li>Null entries will fallback to a broader locale, then English. e.g. zh_TW -> zh -> en</li>
+     *     <li>Null entries will fallback to a broader locale, then English. e.g. zh-TW -> zh -> en</li>
      *     <li>All locale files should contain the same locale keys.</li>
      * </ul>
      *
