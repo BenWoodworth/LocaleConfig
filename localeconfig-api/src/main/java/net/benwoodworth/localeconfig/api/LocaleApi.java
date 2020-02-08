@@ -47,7 +47,7 @@ public class LocaleApi {
      * @param namespace         The namespace for the locale keys. Must not contain a colon.
      * @param localeResourceDir The resource directory containing locale json files. e.g. /locales
      */
-    public static void loadLocales(@NotNull String namespace, @NotNull String localeResourceDir) {
+    public static void load(@NotNull String namespace, @NotNull String localeResourceDir) {
         if (LocaleApi.class.getPackage().getName().equals(PACKAGE)) {
             logErr(namespace, "The package " + PACKAGE + " should be relocated to avoid conflicts");
         }
@@ -65,15 +65,6 @@ public class LocaleApi {
         }
 
         localeTextProvider = LocaleTextProvider.create(namespace, locales);
-    }
-
-    /**
-     * Load locales from the /locales resource directory.
-     *
-     * @see LocaleApi#loadLocales(String, String)
-     */
-    public static void loadLocales(@NotNull String namespace) {
-        loadLocales(namespace, "/locales");
     }
 
     @Nullable
