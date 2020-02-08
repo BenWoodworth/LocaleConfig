@@ -1,14 +1,81 @@
-apply plugin: "maven-publish"
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+}
+
+group = 'net.benwoodworth.localeconfig'
+version = '0.1.0-SNAPSHOT'
+
+def isSnapshot = version.endsWith('SNAPSHOT')
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifactId = "localeconfig-api"
-
+            artifactId = 'localeconfig-api'
             from components.java
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+            pom {
+                name = 'LocaleConfig'
+                description = 'A Minecraft library to simplify locale configuration for players and developers'
+                url = 'https://github.com/BenWoodworth/LocaleConfig'
+                licenses {
+                    license {
+                        name = 'GNU General Public License v3.0'
+                        url = 'https://www.gnu.org/licenses/gpl-3.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'BenWoodworth'
+                        name = 'Ben Woodworth'
+                        email = 'ben@benwoodworth.net'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/BenWoodworth/LocaleConfig.git'
+                    developerConnection = 'scm:git:ssh://github.com/BenWoodworth/LocaleConfig.git'
+                    url = 'http://github.com/BenWoodworth/LocaleConfig'
+                }
+            }
         }
     }
     repositories {
-        mavenLocal()
+        maven {
+            def releasesRepoUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+            def snapshotsRepoUrl = 'https://oss.sonatype.org/content/repositories/snapshots'
+            url = isSnapshot ? snapshotsRepoUrl : releasesRepoUrl
+
+            credentials {
+                username = sonatypeUsername
+                password = sonatypePassword
+            }
+        }
+    }
+}
+
+tasks.withType(GenerateModuleMetadata) {
+    enabled = false
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}
+
+javadoc {
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
     }
 }
