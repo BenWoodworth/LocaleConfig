@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.JarURLConnection;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.jar.JarEntry;
@@ -15,7 +14,10 @@ class LocaleFileLoader {
     private LocaleFileLoader() {
     }
 
-    static Map<Locale, Map<String, String>> loadLocaleFiles(String namespace, String localeResourceDir) throws IOException, URISyntaxException {
+    static Map<Locale, Map<String, String>> loadLocaleFiles(
+            String namespace,
+            URL localeResourceDir
+    ) throws IOException {
         List<String> localeResources = getResourceFiles(localeResourceDir);
 
         Map<Locale, Map<String, String>> locales = new HashMap<>();
@@ -54,12 +56,7 @@ class LocaleFileLoader {
         return Locale.forLanguageTag(localeTag);
     }
 
-    private static List<String> getResourceFiles(String localeResourceDir) throws IOException {
-        URL resourceUrl = LocaleApi.class.getResource(localeResourceDir);
-        if (resourceUrl == null) {
-            throw new RuntimeException("Could not find locale resource directory '" + localeResourceDir + "'");
-        }
-
+    private static List<String> getResourceFiles(URL resourceUrl) throws IOException {
         if (resourceUrl.getProtocol().equals("jar")) {
             return listJarDirContents(resourceUrl);
         }

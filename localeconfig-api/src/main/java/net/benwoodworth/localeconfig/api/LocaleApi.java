@@ -3,6 +3,7 @@ package net.benwoodworth.localeconfig.api;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -57,8 +58,14 @@ public class LocaleApi {
         }
 
         Map<Locale, Map<String, String>> locales;
+
+        URL localeResourceDirUrl = LocaleApi.class.getResource(localeResourceDir);
+        if (localeResourceDirUrl == null) {
+            throw new RuntimeException("Could not find locale resource directory '" + localeResourceDir + "'");
+        }
+
         try {
-            locales = LocaleFileLoader.loadLocaleFiles(namespace, localeResourceDir);
+            locales = LocaleFileLoader.loadLocaleFiles(namespace, localeResourceDirUrl);
         } catch (Exception e) {
             e.printStackTrace();
             locales = new HashMap<>();
