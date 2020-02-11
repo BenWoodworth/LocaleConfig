@@ -13,6 +13,7 @@ abstract class Platform {
     private Map<Locale, Map<String, String>> locales = null;
 
     private Platform() {
+        loadLocales();
     }
 
 
