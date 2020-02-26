@@ -85,22 +85,44 @@ public class LocaleApi {
     }
 
     @Nullable
-    public static LocaleText get(@NotNull String locale, @NotNull String localeKey) {
-        return get(Locale.forLanguageTag(locale.replace('_', '-')), localeKey);
-    }
-
-    @Nullable
     public static LocaleText get(@NotNull org.spongepowered.api.entity.living.player.Player player, @NotNull String localeKey) {
-        return get(player.getLocale(), localeKey);
+        return get(getLocale(player), localeKey);
     }
 
     @Nullable
     public static LocaleText get(@NotNull org.bukkit.entity.Player player, @NotNull String localeKey) {
-        return get(player.getLocale(), localeKey);
+        return get(getLocale(player), localeKey);
     }
 
     @Nullable
     public static LocaleText get(@NotNull net.md_5.bungee.api.connection.ProxiedPlayer player, @NotNull String localeKey) {
-        return get(player.getLocale(), localeKey);
+        return get(getLocale(player), localeKey);
+    }
+
+    @NotNull
+    public static Locale getLocale(@NotNull org.spongepowered.api.entity.living.player.Player player) {
+        try {
+            return player.getLocale();
+        } catch (NoSuchMethodError e) {
+            return localeTextProvider.getServerLocale();
+        }
+    }
+
+    @NotNull
+    public static Locale getLocale(@NotNull org.bukkit.entity.Player player) {
+        try {
+            return Locale.forLanguageTag(player.getLocale().replace('_', '-'));
+        } catch (NoSuchMethodError e) {
+            return localeTextProvider.getServerLocale();
+        }
+    }
+
+    @NotNull
+    public static Locale getLocale(@NotNull net.md_5.bungee.api.connection.ProxiedPlayer player) {
+        try {
+            return player.getLocale();
+        } catch (NoSuchMethodError e) {
+            return localeTextProvider.getServerLocale();
+        }
     }
 }
