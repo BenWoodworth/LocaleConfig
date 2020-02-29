@@ -18,100 +18,86 @@ abstract class LocaleTextProvider {
     abstract Locale getServerLocale();
 
     @Nullable
-    private static Locale broadenLocale(Locale locale) {
-        if (locale.getVariant().length() != 0) {
-            return new Locale(locale.getLanguage(), locale.getCountry());
-        } else if (locale.getCountry().length() != 0) {
-            return new Locale(locale.getLanguage());
-        } else {
-            return null;
-        }
-    }
-
-    @Nullable
-    LocaleText getText(@NotNull Locale locale, @NotNull String localeKey) {
+    LocaleText getText(@NotNull Locale locale, @NotNull String localeTextKey) {
         String namespace;
-        String namespacedLocaleKey;
+        String namespacedLocaleTextKey;
+        {
+            int colonIndex = localeTextKey.indexOf(':');
+            if (colonIndex == -1) {
+                namespace = getNamespace();
+                namespacedLocaleTextKey = localeTextKey;
+            } else {
+                int nextColonIndex = localeTextKey.indexOf(':', colonIndex + 1);
+                if (nextColonIndex != -1) {
+                    throw new IllegalArgumentException("Locale key must have at most one colon for a namespace");
+                }
 
-        int colonIndex = localeKey.indexOf(':');
-        if (colonIndex == -1) {
-            namespace = getNamespace();
-            namespacedLocaleKey = localeKey;
-        } else {
-            int nextColonIndex = localeKey.indexOf(':', colonIndex + 1);
-            if (nextColonIndex != -1) {
-                throw new IllegalArgumentException("Locale key must have at most one colon for a namespace");
+                namespace = localeTextKey.substring(0, colonIndex);
+                namespacedLocaleTextKey = localeTextKey.substring(colonIndex + 1);
             }
-
-            namespace = localeKey.substring(0, colonIndex);
-            namespacedLocaleKey = localeKey.substring(colonIndex + 1);
         }
 
-        Locale tryLocale = locale;
-        boolean triedEnglish = false;
+        LocaleKey localeKey = new LocaleKey(locale);
         do {
-            LocaleText localeText = getText(tryLocale, namespace, namespacedLocaleKey);
+            LocaleText localeText = getText(localeKey, locale, namespace, namespacedLocaleTextKey);
             if (localeText != null) {
                 return localeText;
             }
 
-            if (!triedEnglish && tryLocale.equals(Locale.ENGLISH)) {
-                triedEnglish = true;
-            }
+            localeKey = localeKey.broadened();
+        } while (!localeKey.equals(LocaleKey.DEFAULT));
 
-            tryLocale = broadenLocale(locale);
-        } while (tryLocale != null);
-
-        if (!triedEnglish) {
-            return getText(Locale.ENGLISH, namespace, namespacedLocaleKey);
-        } else {
-            return null;
-        }
+        return getText(localeKey, locale, namespace, namespacedLocaleTextKey);
     }
 
     @Nullable
-    abstract LocaleText getText(@NotNull Locale locale, @NotNull String namespace, @NotNull String namespacedLocaleKey);
+    protected abstract LocaleText getText(
+            @NotNull LocaleKey localeKey,
+            @NotNull Locale locale,
+            @NotNull String namespace,
+            @NotNull String namespacedLocaleTextKey
+    );
 
-    static LocaleTextProvider create(@NotNull String namespace, @NotNull Map<Locale, Map<String, String>> locales) {
+    static LocaleTextProvider create(@NotNull String namespace, @NotNull Map<LocaleKey, Map<String, String>> locales) {
         validateLocales(namespace, locales);
         return new SoftLocaleTextProvider(namespace, locales);
     }
 
-    private static void validateLocales(String namespace, Map<Locale, Map<String, String>> locales) {
-        if (!locales.containsKey(Locale.ENGLISH)) {
+    private static void validateLocales(String namespace, Map<LocaleKey, Map<String, String>> locales) {
+        if (!locales.containsKey(LocaleKey.ENGLISH)) {
             LocaleApi.logErr(namespace, "English (en) locale is missing. English is used as the default locale.");
             return;
         }
 
-        Map<String, String> englishLocaleTexts = locales.get(Locale.ENGLISH);
-        List<String> englishLocaleKeys = new ArrayList<>(englishLocaleTexts.keySet());
-        englishLocaleKeys.sort(String::compareTo);
+        Map<String, String> englishLocaleTexts = locales.get(LocaleKey.ENGLISH);
+        List<String> englishLocaleTextKeys = new ArrayList<>(englishLocaleTexts.keySet());
+        englishLocaleTextKeys.sort(String::compareTo);
 
         // Null values in english
-        for (String localeKey : englishLocaleKeys) {
-            if (englishLocaleTexts.get(localeKey) == null) {
-                LocaleApi.logErr(namespace, "en/" + localeKey + " is null");
+        for (String localeTextKey : englishLocaleTextKeys) {
+            if (englishLocaleTexts.get(localeTextKey) == null) {
+                LocaleApi.logErr(namespace, "en/" + localeTextKey + " is null");
             }
         }
 
         // Missing/extra keys in other locales
-        for (Locale locale : locales.keySet()) {
-            if (locale.equals(Locale.ENGLISH)) {
+        for (LocaleKey localeKey : locales.keySet()) {
+            if (localeKey.equals(LocaleKey.ENGLISH)) {
                 continue;
             }
 
-            Map<String, String> localeTexts = locales.get(locale);
-            for (String englishLocaleKey : englishLocaleKeys) {
-                if (!localeTexts.containsKey(englishLocaleKey)) {
-                    LocaleApi.logErr(namespace, locale.toString() + " is missing a key: " + englishLocaleKey);
+            Map<String, String> localeTexts = locales.get(localeKey);
+            for (String englishLocaleTextKey : englishLocaleTextKeys) {
+                if (!localeTexts.containsKey(englishLocaleTextKey)) {
+                    LocaleApi.logErr(namespace, localeKey.toString() + " is missing a key: " + englishLocaleTextKey);
                 }
             }
 
-            List<String> localeKeys = new ArrayList<>(localeTexts.keySet());
-            localeKeys.sort(String::compareTo);
-            for (String localeKey : localeKeys) {
-                if (!englishLocaleTexts.containsKey(localeKey)) {
-                    LocaleApi.logErr(namespace, locale.toString() + " has an extra key: " + localeKey);
+            List<String> localeTextKeys = new ArrayList<>(localeTexts.keySet());
+            localeTextKeys.sort(String::compareTo);
+            for (String localeTextKey : localeTextKeys) {
+                if (!englishLocaleTexts.containsKey(localeTextKey)) {
+                    LocaleApi.logErr(namespace, localeKey.toString() + " has an extra key: " + localeTextKey);
                 }
             }
         }
@@ -119,9 +105,9 @@ abstract class LocaleTextProvider {
 
     private static class SoftLocaleTextProvider extends LocaleTextProvider {
         private String namespace;
-        private Map<Locale, Map<String, String>> locales;
+        private Map<LocaleKey, Map<String, String>> locales;
 
-        SoftLocaleTextProvider(@NotNull String namespace, Map<Locale, Map<String, String>> locales) {
+        SoftLocaleTextProvider(@NotNull String namespace, Map<LocaleKey, Map<String, String>> locales) {
             this.namespace = namespace;
             this.locales = locales;
         }
@@ -139,11 +125,16 @@ abstract class LocaleTextProvider {
 
         @Override
         @Nullable
-        LocaleText getText(@NotNull Locale locale, @NotNull String namespace, @NotNull String namespacedLocaleKey) {
+        protected LocaleText getText(
+                @NotNull LocaleKey localeKey,
+                @NotNull Locale locale,
+                @NotNull String namespace,
+                @NotNull String namespacedLocaleTextKey
+        ) {
             if (getNamespace().equals(namespace)) {
-                Map<String, String> localeKeys = locales.get(locale);
-                if (localeKeys != null) {
-                    String text = localeKeys.get(namespacedLocaleKey);
+                Map<String, String> localeTextKeys = locales.get(localeKey);
+                if (localeTextKeys != null) {
+                    String text = localeTextKeys.get(namespacedLocaleTextKey);
                     if (text != null) {
                         return new LocaleText(locale, text);
                     }

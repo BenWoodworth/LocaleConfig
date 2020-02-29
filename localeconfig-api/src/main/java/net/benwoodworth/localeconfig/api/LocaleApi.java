@@ -57,7 +57,7 @@ public class LocaleApi {
             throw new IllegalArgumentException("Namespace must not contain a colon.");
         }
 
-        Map<Locale, Map<String, String>> locales;
+        Map<LocaleKey, Map<String, String>> locales;
 
         URL localeResourceDirUrl = LocaleApi.class.getResource(localeResourceDir);
         if (localeResourceDirUrl == null) {
@@ -75,28 +75,28 @@ public class LocaleApi {
     }
 
     @Nullable
-    public static LocaleText get(@NotNull String localeKey) {
-        return get(getLocaleTextProvider().getServerLocale(), localeKey);
+    public static LocaleText get(@NotNull String localeTextKey) {
+        return get(getLocaleTextProvider().getServerLocale(), localeTextKey);
     }
 
     @Nullable
-    public static LocaleText get(@NotNull Locale locale, @NotNull String localeKey) {
-        return getLocaleTextProvider().getText(locale, localeKey);
+    public static LocaleText get(@NotNull Locale locale, @NotNull String localeTextKey) {
+        return getLocaleTextProvider().getText(locale, localeTextKey);
     }
 
     @Nullable
-    public static LocaleText get(@NotNull org.spongepowered.api.entity.living.player.Player player, @NotNull String localeKey) {
-        return get(getLocale(player), localeKey);
+    public static LocaleText get(@NotNull org.spongepowered.api.entity.living.player.Player player, @NotNull String localeTextKey) {
+        return get(getLocale(player), localeTextKey);
     }
 
     @Nullable
-    public static LocaleText get(@NotNull org.bukkit.entity.Player player, @NotNull String localeKey) {
-        return get(getLocale(player), localeKey);
+    public static LocaleText get(@NotNull org.bukkit.entity.Player player, @NotNull String localeTextKey) {
+        return get(getLocale(player), localeTextKey);
     }
 
     @Nullable
-    public static LocaleText get(@NotNull net.md_5.bungee.api.connection.ProxiedPlayer player, @NotNull String localeKey) {
-        return get(getLocale(player), localeKey);
+    public static LocaleText get(@NotNull net.md_5.bungee.api.connection.ProxiedPlayer player, @NotNull String localeTextKey) {
+        return get(getLocale(player), localeTextKey);
     }
 
     @NotNull

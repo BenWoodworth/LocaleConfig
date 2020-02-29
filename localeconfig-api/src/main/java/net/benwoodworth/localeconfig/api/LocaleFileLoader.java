@@ -14,13 +14,13 @@ class LocaleFileLoader {
     private LocaleFileLoader() {
     }
 
-    static Map<Locale, Map<String, String>> loadLocaleFiles(
+    static Map<LocaleKey, Map<String, String>> loadLocaleFiles(
             String namespace,
             URL localeResourceDir
     ) throws IOException {
         List<String> localeResources = getResourceFiles(localeResourceDir);
 
-        Map<Locale, Map<String, String>> locales = new HashMap<>();
+        Map<LocaleKey, Map<String, String>> locales = new HashMap<>();
         for (String localeResource : localeResources) {
             if (!localeResource.toLowerCase().endsWith(".json")) {
                 LocaleApi.logErr(namespace, localeResource + " is not a .json file");
@@ -33,7 +33,7 @@ class LocaleFileLoader {
                 Map<String, String> json = JsonReader.readLocaleJson(reader);
 
                 Locale locale = getLocaleFromResourceName(localeResource);
-                locales.put(locale, json);
+                locales.put(new LocaleKey(locale), json);
             } catch (Exception e) {
                 new Exception("Error loading " + localeResource + ": " + e.getMessage(), e).printStackTrace();
             }
