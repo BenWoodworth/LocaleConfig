@@ -9,24 +9,34 @@ import java.util.Objects;
 final class LocaleKey {
     @NotNull
     static LocaleKey DEFAULT = new LocaleKey(null, null, null);
-    static LocaleKey ENGLISH = new LocaleKey(Locale.ENGLISH);
+    static LocaleKey ENGLISH = get(Locale.ENGLISH);
 
     private final String language;
     private final String country;
     private final String variant;
 
-    private LocaleKey(@Nullable String language, @Nullable String country, @Nullable String variant) {
-        this.language = (language == null || language.isEmpty()) ? null : language;
-        this.country = (country == null || country.isEmpty()) ? null : country;
-        this.variant = (variant == null || variant.isEmpty()) ? null : variant;
+    @NotNull
+    static LocaleKey get(@Nullable String language, @Nullable String country, @Nullable String variant) {
+        return new LocaleKey(
+                (language == null || language.isEmpty()) ? null : language.toLowerCase(Locale.ENGLISH),
+                (country == null || country.isEmpty()) ? null : country.toLowerCase(Locale.ENGLISH),
+                (variant == null || variant.isEmpty()) ? null : variant.toLowerCase(Locale.ENGLISH)
+        );
     }
 
-    LocaleKey(Locale locale) {
-        this(
-                locale.getLanguage().toLowerCase(Locale.ENGLISH),
-                locale.getCountry().toLowerCase(Locale.ENGLISH),
-                locale.getVariant().toLowerCase(Locale.ENGLISH)
-        );
+    @NotNull
+    static LocaleKey get(@Nullable Locale locale) {
+        if (locale == null) {
+            return DEFAULT;
+        } else {
+            return get(locale.getLanguage(), locale.getCountry(), locale.getVariant());
+        }
+    }
+
+    private LocaleKey(@Nullable String language, @Nullable String country, @Nullable String variant) {
+        this.language = language;
+        this.country = country;
+        this.variant = variant;
     }
 
     @NotNull

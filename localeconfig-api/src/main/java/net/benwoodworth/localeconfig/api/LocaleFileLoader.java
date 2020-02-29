@@ -33,7 +33,7 @@ class LocaleFileLoader {
                 Map<String, String> json = JsonReader.readLocaleJson(reader);
 
                 Locale locale = getLocaleFromResourceName(localeResource);
-                locales.put(new LocaleKey(locale), json);
+                locales.put(LocaleKey.get(locale), json);
             } catch (Exception e) {
                 new Exception("Error loading " + localeResource + ": " + e.getMessage(), e).printStackTrace();
             }

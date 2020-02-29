@@ -74,55 +74,103 @@ public class LocaleApi {
         localeTextProvider = LocaleTextProvider.create(namespace, locales);
     }
 
+    /**
+     * Gets LocaleText for the specified locale and localeTextKey.
+     * <p>
+     * The locale text key can specify a namespace with "namespace:locale.text.key".
+     * <p>
+     * If no namespace is specified, the namespace that was used in {@link #load(String, String)} will be used.
+     *
+     * @param locale        the locale of the text to get, or null for server default.
+     * @param localeTextKey the key of the locale text to get.
+     */
     @Nullable
-    public static LocaleText get(@NotNull String localeTextKey) {
-        return get(getLocaleTextProvider().getServerLocale(), localeTextKey);
-    }
-
-    @Nullable
-    public static LocaleText get(@NotNull Locale locale, @NotNull String localeTextKey) {
+    public static LocaleText get(@Nullable Locale locale, @NotNull String localeTextKey) {
         return getLocaleTextProvider().getText(locale, localeTextKey);
     }
 
+    /**
+     * Gets LocaleText using the default locale.
+     *
+     * @see #get(Locale, String)
+     */
+    @Nullable
+    public static LocaleText get(@NotNull String localeTextKey) {
+        return get((Locale) null, localeTextKey);
+    }
+
+    /**
+     * Gets LocaleText for the specified player's locale and localeTextKey.
+     *
+     * @see #get(Locale, String)
+     */
     @Nullable
     public static LocaleText get(@NotNull org.spongepowered.api.entity.living.player.Player player, @NotNull String localeTextKey) {
         return get(getLocale(player), localeTextKey);
     }
 
+    /**
+     * Gets LocaleText for the specified player's locale and localeTextKey.
+     *
+     * @see #get(Locale, String)
+     */
     @Nullable
     public static LocaleText get(@NotNull org.bukkit.entity.Player player, @NotNull String localeTextKey) {
         return get(getLocale(player), localeTextKey);
     }
 
+    /**
+     * Gets LocaleText for the specified player's locale and localeTextKey.
+     *
+     * @see #get(Locale, String)
+     */
     @Nullable
     public static LocaleText get(@NotNull net.md_5.bungee.api.connection.ProxiedPlayer player, @NotNull String localeTextKey) {
         return get(getLocale(player), localeTextKey);
     }
 
-    @NotNull
+    /**
+     * Gets the specified player's locale.
+     *
+     * @return the player's locale, or null if unable to get it.
+     * @see #get(Locale, String)
+     */
+    @Nullable
     public static Locale getLocale(@NotNull org.spongepowered.api.entity.living.player.Player player) {
         try {
             return player.getLocale();
         } catch (NoSuchMethodError e) {
-            return localeTextProvider.getServerLocale();
+            return null;
         }
     }
 
-    @NotNull
+    /**
+     * Gets the specified player's locale.
+     *
+     * @return the player's locale, or null if unable to get it.
+     * @see #get(Locale, String)
+     */
+    @Nullable
     public static Locale getLocale(@NotNull org.bukkit.entity.Player player) {
         try {
             return Locale.forLanguageTag(player.getLocale().replace('_', '-'));
         } catch (NoSuchMethodError e) {
-            return localeTextProvider.getServerLocale();
+            return null;
         }
     }
 
-    @NotNull
+    /**
+     * Gets the specified player's locale.
+     *
+     * @return the player's locale, or null if unable to get it.
+     * @see #get(Locale, String)
+     */
+    @Nullable
     public static Locale getLocale(@NotNull net.md_5.bungee.api.connection.ProxiedPlayer player) {
         try {
             return player.getLocale();
         } catch (NoSuchMethodError e) {
-            return localeTextProvider.getServerLocale();
+            return null;
         }
     }
 }

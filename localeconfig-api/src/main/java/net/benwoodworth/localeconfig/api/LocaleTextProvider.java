@@ -59,11 +59,8 @@ abstract class LocaleTextProvider {
 
     protected abstract String getNamespace();
 
-    @NotNull
-    abstract Locale getServerLocale();
-
     @Nullable
-    LocaleText getText(@NotNull Locale locale, @NotNull String localeTextKey) {
+    LocaleText getText(@Nullable Locale locale, @NotNull String localeTextKey) {
         String namespace;
         String namespacedLocaleTextKey;
         {
@@ -82,7 +79,7 @@ abstract class LocaleTextProvider {
             }
         }
 
-        LocaleKey localeKey = new LocaleKey(locale);
+        LocaleKey localeKey = LocaleKey.get(locale);
         do {
             LocaleText localeText = getText(localeKey, locale, namespace, namespacedLocaleTextKey);
             if (localeText != null) {
@@ -115,12 +112,6 @@ abstract class LocaleTextProvider {
         @Override
         protected String getNamespace() {
             return namespace;
-        }
-
-        @Override
-        @NotNull
-        Locale getServerLocale() {
-            return Locale.ENGLISH;
         }
 
         @Override
