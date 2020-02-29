@@ -39,6 +39,8 @@ class LocaleFileLoader {
             }
         }
 
+        locales.put(LocaleKey.DEFAULT, locales.get(LocaleKey.ENGLISH));
+
         return locales;
     }
 
