@@ -22,11 +22,11 @@ public class LocaleApi {
     }
 
     static void log(String namespace, String message) {
-        System.out.println("[LocaleApi] " + namespace + ": " + message);
+        System.out.println("[LocaleConfig] " + namespace + ": " + message);
     }
 
     static void logErr(String namespace, String message) {
-        System.err.println("[LocaleApi] " + namespace + ": " + message);
+        System.err.println("[LocaleConfig] " + namespace + ": " + message);
     }
 
     @NotNull
