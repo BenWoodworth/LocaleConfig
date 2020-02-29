@@ -14,6 +14,10 @@ public class LocaleApi {
 
     private static LocaleTextProvider localeTextProvider = null;
 
+    private static boolean canGetSpongePlayerLocale = true;
+    private static boolean canGetBukkitPlayerLocale = true;
+    private static boolean canGetBungeePlayerLocale = true;
+
     private LocaleApi() {
     }
 
@@ -137,9 +141,14 @@ public class LocaleApi {
      */
     @Nullable
     public static Locale getLocale(@NotNull org.spongepowered.api.entity.living.player.Player player) {
+        if (!canGetSpongePlayerLocale) {
+            return null;
+        }
+
         try {
             return player.getLocale();
         } catch (NoSuchMethodError e) {
+            canGetSpongePlayerLocale = false;
             return null;
         }
     }
@@ -152,9 +161,25 @@ public class LocaleApi {
      */
     @Nullable
     public static Locale getLocale(@NotNull org.bukkit.entity.Player player) {
+        if (!canGetBukkitPlayerLocale) {
+            return null;
+        }
+
+        String localeTag;
         try {
-            return Locale.forLanguageTag(player.getLocale().replace('_', '-'));
+            localeTag = player.getLocale();
         } catch (NoSuchMethodError e) {
+            canGetBukkitPlayerLocale = false;
+            return null;
+        }
+
+        if (localeTag == null) {
+            return null;
+        }
+
+        try {
+            return Locale.forLanguageTag(localeTag.replace('_', '-'));
+        } catch (Exception e) {
             return null;
         }
     }
@@ -167,9 +192,14 @@ public class LocaleApi {
      */
     @Nullable
     public static Locale getLocale(@NotNull net.md_5.bungee.api.connection.ProxiedPlayer player) {
+        if (!canGetBungeePlayerLocale) {
+            return null;
+        }
+
         try {
             return player.getLocale();
         } catch (NoSuchMethodError e) {
+            canGetBungeePlayerLocale = false;
             return null;
         }
     }
