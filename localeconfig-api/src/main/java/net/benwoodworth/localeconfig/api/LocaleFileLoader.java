@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.JarURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -29,7 +30,7 @@ class LocaleFileLoader {
 
             try {
                 InputStream resourceStream = LocaleApi.class.getResourceAsStream("/" + localeResource);
-                BufferedReader reader = new BufferedReader(new InputStreamReader(resourceStream));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(resourceStream, StandardCharsets.UTF_8));
                 Map<String, String> json = JsonReader.readLocaleJson(reader);
 
                 Locale locale = getLocaleFromResourceName(localeResource);
