@@ -45,7 +45,7 @@ public class LocaleApi {
      *     <li>Locale files should be named *.json, e.g. en.json, en-US.json, etc.</li>
      *     <li>The locale json should be an object containing only null/string entries.</li>
      *     <li>English (en.json) is used as a default/fallback, and should not contain null entries.</li>
-     *     <li>Null entries will fallback to a broader locale, then English. e.g. zh-TW -> zh -> en</li>
+     *     <li>Null entries will fallback to a broader locale, then English. e.g. zh-TW &rarr; zh &rarr; en</li>
      *     <li>All locale files should contain the same locale keys.</li>
      * </ul>
      *
@@ -87,6 +87,7 @@ public class LocaleApi {
      *
      * @param locale        the locale of the text to get, or null for server default.
      * @param localeTextKey the key of the locale text to get.
+     * @return locale text
      */
     @Nullable
     public static LocaleText get(@Nullable Locale locale, @NotNull String localeTextKey) {

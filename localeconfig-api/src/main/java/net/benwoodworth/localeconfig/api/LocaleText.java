@@ -85,8 +85,7 @@ public class LocaleText {
      *         "key2", value2,
      *         ...
      *     )
-     *     </pre>
-     * </p>
+     * </pre>
      *
      * @param substitutionPairs The placeholder/value pairs to be substituted.
      * @return the substituted locale text.
